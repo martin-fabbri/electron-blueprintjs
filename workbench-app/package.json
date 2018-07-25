@@ -7,17 +7,26 @@
     "react-dom": "^16.4.1",
     "react-scripts-ts": "2.16.0"
   },
+  "main": "src/electron/main.js",
   "scripts": {
+    "dev": "concurrently \"npm run start\" \"wait-on http://localhost:3000 && npm run electron\"",
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "electron": "electron ."
   },
   "devDependencies": {
     "@types/jest": "^23.3.0",
     "@types/node": "^10.5.3",
     "@types/react": "^16.4.7",
     "@types/react-dom": "^16.0.6",
-    "typescript": "^2.9.2"
-  }
+    "concurrently": "^3.6.1",
+    "electron": "^2.0.5",
+    "electron-builder": "^20.25.0",
+    "foreman": "^3.0.1",
+    "typescript": "^2.9.2",
+    "wait-on": "^2.1.0"
+  },
+  "homepage": "./"
 }
