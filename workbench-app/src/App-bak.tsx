@@ -1,8 +1,5 @@
-import {Mosaic} from 'react-mosaic-component'
-import {ExpandButton} from './ExpandButton'
-import {RemoveButton} from './RemoveButton'
 
-import {MosaicWindow} from './MosaicWindow';
+import {ExpandButton, Mosaic, MosaicWindow, RemoveButton} from 'react-mosaic-component'
 
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
@@ -11,8 +8,6 @@ import './App.css';
 import './css/tailwind.css';
 
 import * as React from 'react';
-
-import {default as Navbar} from './navbar';
 
 const DEFAULT_CONTROLS_WITHOUT_CREATION = React.Children.toArray([<ExpandButton key="expand"/>, <RemoveButton key="remove"/>]);
 
@@ -35,8 +30,47 @@ class App extends React.Component {
     public render() {
 
         return (
-            <div className="app-container">
-                    <Navbar/>
+            <div className="antialiased h-screen flex">
+                <section className="flex-none w-screen pb-6 pr-6 hidden md:block">
+                    <nav className="bp3-navbar pr-8 titlebar-draggable bp3-dark">
+                        <div className="bp3-navbar-group bp3-align-left pl-20">
+                            <div className="bp3-button-group .modifier">
+                                <a className="bp3-button">
+                                    <img height={18} width={18} src="img/ws_sample_plus.svg" alt="Kiwi standing on oval"/>
+                                </a>
+                                <a className="bp3-button"
+                                   role="button">
+                                    <img height={18} width={18} src="img/ws_group_new.svg" alt="Kiwi standing on oval"/>
+                                </a>
+                                <a className="bp3-button"
+                                   role="button">
+                                    <img height={18} width={18} src="img/ws_layout.svg" alt="Kiwi standing on oval"/>
+                                </a>
+                                <a className="bp3-button"
+                                   role="button">
+                                    <img height={18} width={18} src="img/ws_populations.svg" alt="Kiwi standing on oval"/>
+                                </a>
+                            </div>
+
+                            <div className="sm:hidden lg:flex lg:flex-col ml-4 bp3-align-left">
+                                <div className="bp3-ui-text ml-2">
+                                    LD1_NS_+_NS_A1_exp
+                                </div>
+                            </div>
+
+                        </div>
+                        <div className="bp3-navbar-group bp3-align-right">
+                            <button className="bp3-button bp3-minimal bp3-icon-control"><span className="sm:hidden lg:flex">Configure Workspace</span></button>
+                            <div className="bp3-button-group bp3-minimal">
+                                <a className="bp3-button bp3-icon-undo" role="button"/>
+                                <a className="bp3-button bp3-icon-redo" role="button"/>
+                            </div>
+                            <span className="bp3-navbar-divider"/>
+                            <button className="bp3-button bp3-minimal bp3-icon-user"/>
+                            <button className="bp3-button bp3-minimal bp3-icon-help"/>
+                            <button className="bp3-button bp3-minimal bp3-icon-cog"/>
+                        </div>
+                    </nav>
 
                     <ViewIdMosaic
                         renderTile={(id, path) => (
@@ -184,7 +218,6 @@ class App extends React.Component {
                                 {id === 'gp' && <h1>{TITLE_MAP[id]}</h1>}
 
                             </ViewIdMosaicWindow>
-
                         )}
                         initialValue={{
                             direction: 'column',
@@ -197,6 +230,7 @@ class App extends React.Component {
                             },
                         }}
                     />
+                </section>
             </div>
         );
     }

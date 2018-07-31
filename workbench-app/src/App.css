@@ -1,28 +1,83 @@
-.App {
-  text-align: center;
+html, body, .app-container {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.app-container {
+  margin-right: 10px;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.theme-selection {
+  margin: 0;
 }
 
-.App-title {
-  font-size: 1.5em;
+.bp3-navbar {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.App-intro {
-  font-size: large;
+body {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.mosaic-drop-target {
+  position: absolute;
+}
+
+.mosaic {
+  height: calc(100% - 36px);
+}
+
+.bp3-navbar {
+  height: 36px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: .5rem;
+}
+
+.span-col-2 {
+  grid-column: span 2 / auto;
+}
+
+.span-row-2 {
+  grid-row: span 2 / auto;
+}
+
+.titlebar-draggable {
+  -webkit-app-region: drag
+}
+
+/*@media screen and (min-width: 768px) {*/
+/*.grid {*/
+/*grid-template-columns: repeat(2, 1fr);*/
+/*}*/
+/*}*/
+
+@media screen and (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.grid a img {
+  transition: all .2s ease-in;
+  filter: grayscale(100%);
+}
+
+.grid a:hover img {
+  filter: grayscale(0);
 }
