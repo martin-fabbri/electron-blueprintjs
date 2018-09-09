@@ -27,6 +27,7 @@ export interface MosaicWindowProps<T extends MosaicKey> {
   draggable?: boolean;
   createNode?: CreateNode<T>;
   renderPreview?: (props: MosaicWindowProps<T>) => JSX.Element;
+  toolbarTab?: React.ReactNode;
 }
 
 export interface InternalDragSourceProps {
@@ -150,14 +151,14 @@ export class InternalMosaicWindow<T extends MosaicKey> extends React.Component<
   }
 
   private renderToolbar() {
-    const { title, draggable, additionalControls, additionalControlButtonText, connectDragSource, path } = this.props;
-    const { additionalControlsOpen } = this.state;
+    const { draggable, additionalControls, connectDragSource, path, toolbarTab } = this.props;
     const toolbarControls = this.getToolbarControls();
 
+    // {/*<div title={title} className="mosaic-window-title">*/}
     let titleDiv: React.ReactElement<any> = (
-      <div title={title} className="mosaic-window-title">
-        {title}
-      </div>
+        <div>
+            {toolbarTab}
+        </div>
     );
 
     const draggableAndNotRoot = draggable && path.length > 0;
@@ -171,16 +172,7 @@ export class InternalMosaicWindow<T extends MosaicKey> extends React.Component<
       <div className={classNames('mosaic-window-toolbar', { draggable: draggableAndNotRoot })}>
         {titleDiv}
         <div className="mosaic-window-controls bp3-button-group">
-          {hasAdditionalControls && (
-            <button
-              onClick={this.setAdditionalControlsOpen.bind(this, !additionalControlsOpen)}
-              className={classNames('bp3-button bp3-minimal bp3-icon-more', {
-                'bp3-active': additionalControlsOpen,
-              })}
-            >
-              <span className="control-text">{additionalControlButtonText!}</span>
-            </button>
-          )}
+            {additionalControls}
           {hasAdditionalControls && <Separator />}
           {toolbarControls}
         </div>

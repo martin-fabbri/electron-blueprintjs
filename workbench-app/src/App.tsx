@@ -1,11 +1,17 @@
 import {Mosaic} from 'react-mosaic-component'
 import {ExpandButton} from './ExpandButton'
 import {RemoveButton} from './RemoveButton'
-
+import {FullscreenButton} from './FullscreenButton'
+import {AddGraphWindowButton} from './AddGraphWindowModeButton'
+import {GraphsWindowTabs} from './GraphsWindowTabs'
+import {THEMES} from './navbar';
 import {MosaicWindow} from './MosaicWindow';
+import {SamplesTable} from './SamplesTable';
+import {FilterInput} from './FilterInput';
 
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+import '@blueprintjs/table/lib/css/table.css';
 import 'react-mosaic-component/react-mosaic-component.css';
 import './App.css';
 import './css/tailwind.css';
@@ -13,9 +19,20 @@ import './css/tailwind.css';
 import * as React from 'react';
 
 import {default as Navbar} from './navbar';
+import {Button, MenuItem} from "@blueprintjs/core";
+import {Select} from "@blueprintjs/select";
+import {ItemRenderer} from "@blueprintjs/select/lib/cjs";
 
-const DEFAULT_CONTROLS_WITHOUT_CREATION = React.Children.toArray([<ExpandButton key="expand"/>, <RemoveButton key="remove"/>]);
+export interface AppState {
+    currentTheme: string;
+    paramX: Parameters;
+}
 
+export interface AppProps {
+    debug?: boolean;
+}
+
+const DEFAULT_CONTROLS_WITHOUT_CREATION = React.Children.toArray([<FullscreenButton key="fullscreen"/>, <ExpandButton key="expand"/>, <RemoveButton key="remove"/>]);
 export type ViewId = 'gp' | 'st' | 'gw' | 'lw' | 'new';
 
 const ViewIdMosaic = Mosaic.ofType<ViewId>();
@@ -29,159 +46,153 @@ const TITLE_MAP: Record<ViewId, string> = {
     'st': 'Samples Table'
 };
 
+const EMPTY_ARRAY: any[] = [];
 
-class App extends React.Component {
+const addGraphWindowMode = React.Children.toArray([<AddGraphWindowButton key='addGraphMode'/>]);
+const samplesToolbar = React.Children.toArray([<FilterInput key='samples'/>]);
+const graphsWindowTabs = React.Children.toArray([<GraphsWindowTabs key='addGraphMode'/>]);
+
+interface Parameters {
+    id: number;
+    type: string;
+}
+
+const ParametersSelect = Select.ofType<Parameters>();
+
+const lines = [
+    {id: 1, type: 'dotted'},
+    {id: 2, type: 'solid' }
+];
+
+class App extends React.Component<AppProps, AppState> {
+
+    state: AppState = {
+        currentTheme: 'Light Theme',
+        paramX: lines[0],
+    };
 
     public render() {
 
+        const {paramX} = this.state;
+
+        console.log('rendering', paramX.type);
+
         return (
-            <div className="app-container">
-                    <Navbar/>
+            <div className={`app-container ${this.state.currentTheme === 'Dark Theme' ? 'bp3-dark' : ''}`}>
+
+                    <Navbar currentTheme={this.state.currentTheme} setThemeState={this.setCurrentTheme}/>
 
                     <ViewIdMosaic
+                        className={THEMES[this.state.currentTheme]}
                         renderTile={(id, path) => (
                             // tslint:disable-next-line jsx-no-lambda
-                            <ViewIdMosaicWindow path={path} title={TITLE_MAP[id]} toolbarControls={DEFAULT_CONTROLS_WITHOUT_CREATION}>
+                            <ViewIdMosaicWindow
+                                path={path}
+                                title={TITLE_MAP[id]}
+                                toolbarControls={DEFAULT_CONTROLS_WITHOUT_CREATION}
+                                additionalControls={id === 'gw' ? addGraphWindowMode : EMPTY_ARRAY}
+                                toolbarTab={id === 'gw' ? graphsWindowTabs : (id === 'st' ? samplesToolbar : EMPTY_ARRAY)}
+                            >
 
                                 {id === 'gw' &&
-                                <div className="grid max-w-l mx-auto p-8">
-                                    <div className="bg-white rounded h-full text-grey-darkest shadow-md">
-                                        <img src="img/histogram1.png" alt="Histogran 1"
-                                             className="w-full block rounded-b"/>
-                                    </div>
-                                    <div className="bg-white rounded h-full text-grey-darkest shadow-md">
-                                        <img src="img/dot-plot1.png" alt="Dotplot 1"
-                                             className="w-full block rounded-b"/>
-                                    </div>
-                                    <div className="bg-white rounded h-full text-grey-darkest shadow-md">
-                                        <img src="img/density3.png" alt="Quads 1"
-                                             className="w-full block rounded-b"/>
-                                    </div>
-                                    <div className="bg-white rounded h-full text-grey-darkest shadow-md">
-                                        <img src="img/gate1.png" alt="Gate 1" className="w-full block rounded-b"/>
-                                    </div>
-                                    <div className="bg-white rounded h-full text-grey-darkest shadow-md">
-                                        <img src="img/quad2.png" alt="Quad 2" className="w-full block rounded-b"/>
-                                    </div>
 
-                                    <div
-                                        className="span-col-2 span-row-2 bg-white rounded h-full text-grey-darkest shadow-md">
-                                        <img src="img/quads1.png" alt="Quads 1" className="w-full block rounded-b"/>
-                                    </div>
+                                         <div className="grid-container max-w-l mx-auto p-8">
+                                             <div className="bg-white rounded h-full text-grey-darkest shadow-md satellite1">
+                                                 <img src="img/histogram1.png" alt="Histogran 1"
+                                                      className="w-full block rounded-b"/>
+                                                 <p className="text-center text-xs">{this.state.paramX.type}</p>
+                                             </div>
+                                             <div className="bg-white rounded h-full text-grey-darkest shadow-md satellite2">
+                                                 <img src="img/dot-plot1.png" alt="Dotplot 1"
+                                                      className="w-full block rounded-b"/>
+                                                 <p className="text-center text-xs"> {paramX.type}</p>
+                                             </div>
+                                             <div className="bg-white rounded h-full text-grey-darkest shadow-md satellite3">
+                                                 <img src="img/density3.png" alt="Quads 1"
+                                                      className="w-full block rounded-b"/>
+                                                 <p className="text-center text-xs"> {paramX.type}</p>
+                                             </div>
+                                             <div className="bg-white rounded h-full text-grey-darkest shadow-md  satellite4">
+                                                 <img src="img/gate1.png" alt="Gate 1" className="w-full block rounded-b"/>
+                                                 <p className="text-center text-xs"> {paramX.type}</p>
+                                             </div>
+                                             <div className="bg-white rounded h-full text-grey-darkest shadow-md satellite5">
+                                                 <img src="img/quad2.png" alt="Quad 2" className="w-full block rounded-b"/>
+                                                 <p className="text-center text-xs"> {paramX.type}</p>
+                                             </div>
 
-                                    <div className="bg-white rounded h-full text-grey-darkest shadow-md">
-                                        <img src="img/cdf1.png" alt="Quad 2" className="w-full block rounded-b"/>
-                                    </div>
-                                    <div className="bg-white rounded h-full text-grey-darkest shadow-md">
-                                        <img src="img/heatmap1.png" alt="Quad 2"
-                                             className="w-full block rounded-b"/>
-                                    </div>
-                                    <div className="bg-white rounded h-full text-grey-darkest shadow-md">
-                                        <img src="img/zebra1.png" alt="Quad 2" className="w-full block rounded-b"/>
-                                    </div>
-                                    <div className="bg-white rounded h-full text-grey-darkest shadow-md">
-                                        <img src="img/density-plot1.png" alt="Quad 2"
-                                             className="w-full block rounded-b"/>
-                                    </div>
-                                    <div className="bg-white rounded h-full text-grey-darkest shadow-md">
-                                        <img src="img/contour-plot1.png" alt="Contour plot"
-                                             className="w-full block rounded-b"/>
-                                    </div>
-                                    <div className="bg-white rounded h-full text-grey-darkest shadow-md">
-                                        <img src="img/density2.png" alt="Contour plot"
-                                             className="w-full block rounded-b"/>
-                                    </div>
-                                    <div className="bg-white rounded h-full text-grey-darkest shadow-md">
-                                        <img src="img/histogram2.png" alt="Contour plot"
-                                             className="w-full block rounded-b"/>
-                                    </div>
-                                </div>
+                                             <div className="grid-axes bg-white rounded h-full text-grey-darkest shadow-md main-plot">
+                                                 <div className='x'>
+                                                     <ParametersSelect
+                                                         items={lines}
+                                                         filterable={false}
+                                                         itemRenderer={this.renderParam}
+                                                         onItemSelect={this.handleValueChangeX}
+                                                         className='bp3-button-fill'
+                                                     >
+                                                         <Button className='bp3-button-fill'
+                                                                 text={paramX.type}
+                                                                 rightIcon="caret-down"/>
+                                                         {paramX.type}
+                                                     </ParametersSelect>
+                                                 </div>
+                                                 <div className='y'>
+                                                     y
+                                                 </div>
+                                                 <div className='plot'>
+                                                    <img src="img/quads1.png" alt="Quads 1" className="w-full block rounded-b"/>
+                                                 </div>
+                                             </div>
+
+                                             <div className="bg-white rounded h-full text-grey-darkest shadow-md satellite6">
+                                                 <img src="img/cdf1.png" alt="Quad 2" className="w-full block rounded-b"/>
+                                                 <p className="text-center text-xs">FSC-A</p>
+                                             </div>
+                                             <div className="bg-white rounded h-full text-grey-darkest shadow-md satellite7">
+                                                 <img src="img/heatmap1.png" alt="Quad 2"
+                                                      className="w-full block rounded-b"/>
+                                                 <p className="text-center text-xs">FSC-A</p>
+                                             </div>
+                                             <div className="bg-white rounded h-full text-grey-darkest shadow-md satellite8">
+                                                 <img src="img/zebra1.png" alt="Quad 2" className="w-full block rounded-b"/>
+                                                 <p className="text-center text-xs">FSC-A</p>
+                                             </div>
+                                             <div className="bg-white rounded h-full text-grey-darkest shadow-md satellite9">
+                                                 <img src="img/density-plot1.png" alt="Quad 2"
+                                                      className="w-full block rounded-b"/>
+                                                 <p className="text-center text-xs">FSC-A</p>
+                                             </div>
+                                             <div className="bg-white rounded h-full text-grey-darkest shadow-md satellite10">
+                                                 <img src="img/contour-plot1.png" alt="Contour plot"
+                                                      className="w-full block rounded-b"/>
+                                                 <p className="text-center text-xs">FSC-A</p>
+                                             </div>
+                                             <div className="bg-white rounded h-full text-grey-darkest shadow-md satellite11">
+                                                 <img src="img/density2.png" alt="Contour plot"
+                                                      className="w-full block rounded-b"/>
+                                                 <p className="text-center text-xs">FSC-A</p>
+                                             </div>
+                                             <div className="bg-white rounded h-full text-grey-darkest shadow-md satellite12">
+                                                 <img src="img/histogram2.png" alt="Contour plot"
+                                                      className="w-full block rounded-b"/>
+                                                 <p className="text-center text-xs">FSC-A</p>
+                                             </div>
+                                         </div>
+
                                 }
 
                                 {id === 'st' &&
-                                <div>
-                                    <div className="bp3-tree bp3-elevation-0">
-                                        <ul className="bp3-tree-node-list bp3-tree-root">
-                                            <li className="bp3-tree-node bp3-tree-node-expanded border-b bg-orange-lightest">
-                                                <div className="bg-orange-lightest border-l-4 border-orange-dark">
-                                                    <div className="bp3-tree-node-content flex-none border-b border-dotted">
-                                                        <span
-                                                            className="bp3-tree-node-caret bp3-tree-node-caret-open bp3-icon-standard"/>
-                                                        <span
-                                                            className="bp3-tree-node-icon bp3-icon-standard bp3-icon-selection text-green"/>
-                                                        <span className="bp3-tree-node-label font-bold text-orange-dark">LD_NS+NS_A01_exp.fs</span>
-                                                        <span
-                                                            className="bp3-tree-node-secondary-label text-xs">96,670 events</span>
-                                                    </div>
-                                                    <ul className="bp3-tree-node-list">
-                                                        <li className="bp3-tree-node border-b border-dotted">
-                                                            <div className="bp3-tree-node-content">
-                                                            <span
-                                                                className="bp3-tree-node-caret-none bp3-icon-standard"/>
-                                                                <span
-                                                                    className="bp3-tree-node-icon bp3-icon-standard bp3-icon-left-join"/>
-                                                                <span className="bp3-tree-node-label">Q1: CD4-, CD8+</span>
-                                                                <span
-                                                                    className="bp3-tree-node-secondary-label text-xs">42,908 events</span>
-                                                            </div>
-                                                        </li>
-                                                        <li className="bp3-tree-node">
-                                                            <div className="bp3-tree-node-content">
-                                                            <span
-                                                                className="bp3-tree-node-caret-none bp3-icon-standard"/>
-                                                                <span
-                                                                    className="bp3-tree-node-icon bp3-icon-standard bp3-icon-left-join"/>
-                                                                <span
-                                                                    className="bp3-tree-node-label">Q2: CD4+, CD8+</span>
-                                                                <span
-                                                                    className="bp3-tree-node-secondary-label text-xs">25,398 events</span>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-
-
-                                            </li>
-
-                                            <li className="bp3-tree-node bp3-tree-node-expanded border-b">
-                                                <div className="bp3-tree-node-content">
-                                                        <span
-                                                            className="bp3-tree-node-caret bp3-tree-node-caret-closed bp3-icon-standard"/>
-                                                    <span
-                                                        className="bp3-tree-node-icon bp3-icon-standard bp3-icon-selection text-blue"/>
-                                                    <span className="bp3-tree-node-label font-bold">LD_NS+NS_PI_C01_exp.fs</span>
-                                                    <span
-                                                        className="bp3-tree-node-secondary-label text-xs">222,670 events</span>
-                                                </div>
-                                            </li>
-
-                                            <li className="bp3-tree-node bp3-tree-node-expanded border-b">
-                                                <div className="bp3-tree-node-content">
-                                                        <span
-                                                            className="bp3-tree-node-caret bp3-tree-node-caret-closed bp3-icon-standard"/>
-                                                    <span
-                                                        className="bp3-tree-node-icon bp3-icon-standard bp3-icon-selection text-red"/>
-                                                    <span className="bp3-tree-node-label font-bold">LD_NS+NS_PI_C01_exp.fs</span>
-                                                    <span className="bp3-tag bp3-intent-danger">File not found</span>
-                                                    <span
-                                                        className="bp3-tree-node-secondary-label">
-                                                            <button type="button"
-                                                                    className="bp3-button bp3-intent-danger bp3-minimal text-xs">
-                                                                <span className="bp3-icon-standard bp3-icon-refresh bp3-align-right"/>
-                                                            </button>
-                                                        </span>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <a href="#">Add Statistics</a>
-                                        <a href="#" className="ml-3">Add Keyword</a>
-                                    </div>
-                                </div>
+                                    <SamplesTable/>
                                 }
 
-                                {id === 'lw' && <h1>{TITLE_MAP[id]}</h1>}
+                                {id === 'lw' && <div
+                                >
 
-                                {id === 'gp' && <h1>{TITLE_MAP[id]}</h1>}
+                                    <h1><span>paramX.type</span>{paramX.type}</h1>
+                                    <h2><span>paramX.type</span>{paramX.type}</h2>
+                                </div> }
+                                {id === 'gp' && <div><h1><span>paramX.type</span>{paramX.type}</h1>
+                                <h2><span>paramX.type</span>{paramX.type}</h2></div>}
 
                             </ViewIdMosaicWindow>
 
@@ -192,13 +203,47 @@ class App extends React.Component {
                             second: {
                                 direction: 'row',
                                 first: 'st',
-                                second: 'gw',
-                                third: 'lw',
+                                second: {
+                                    direction: 'row',
+                                    first: 'gw',
+                                    second: 'lw',
+                                }
                             },
                         }}
                     />
             </div>
         );
+    }
+
+    private renderParam: ItemRenderer<Parameters> = (param, { handleClick, modifiers }) => {
+        if (!modifiers.matchesPredicate) {
+            return null;
+        }
+        const {paramX} = this.state;
+        const active = param.id === paramX.id;
+        // console.log('param.type', param.type, active);
+        return (
+            <MenuItem
+                active={active}
+                disabled={modifiers.disabled}
+                key={param.id}
+                onClick={handleClick}
+                text={param.type}
+            />
+        );
+    };
+
+    private handleValueChangeX = (p: Parameters) => {
+        this.setState({
+            ...this.state,
+            paramX: p
+        });
+    };
+
+    private setCurrentTheme = (theme: string) => {
+
+        console.log('setCurrentTheme', theme);
+        this.setState({ currentTheme: theme});
     }
 }
 

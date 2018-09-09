@@ -13,7 +13,7 @@ export function createDefaultToolbarButton(
       onClick={onClick}
       className={classNames('mosaic-default-control bp3-button bp3-minimal', className)}
     >
-      {text! && <span className="control-text">text!</span>}
+      {text! && <span className="control-text">{text}</span>}
     </button>
   );
 }

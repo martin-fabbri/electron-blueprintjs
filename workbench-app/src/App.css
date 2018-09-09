@@ -37,47 +37,88 @@ body {
   height: 36px;
 }
 
-.grid {
+.satellite1 { grid-area: satellite1; }
+.satellite2 { grid-area: satellite2; }
+.satellite3 { grid-area: satellite3; }
+.satellite4 { grid-area: satellite4; }
+.satellite5 { grid-area: satellite5; }
+.satellite6 { grid-area: satellite6; }
+.satellite7 { grid-area: satellite7; }
+.satellite8 { grid-area: satellite8; }
+.satellite9 { grid-area: satellite9; }
+.satellite10 { grid-area: satellite10; }
+.satellite11 { grid-area: satellite11; }
+.satellite12 { grid-area: satellite12; }
+
+.main-plot { grid-area: main; }
+
+.grid-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-areas:
+          'satellite1 satellite2 satellite3 satellite4'
+          'satellite5 main main satellite6'
+          'satellite7 main main satellite8'
+          'satellite9 satellite10 satellite11 satellite12';
   grid-gap: .5rem;
+  grid-template-columns: minmax(100px, 150px) minmax(100px, 150px)
+  minmax(100px, 150px) minmax(100px, 150px);
+  grid-template-rows: minmax(100px, 150px) minmax(100px, 150px)
+  minmax(100px, 150px) minmax(100px, 150px);
+
+  justify-content: center;
 }
 
-.span-col-2 {
-  grid-column: span 2 / auto;
+.grid-axes {
+  display: grid;
+  grid-template-areas:
+          'axisy plot'
+          'blank axisx';
+  grid-gap: .1rem;
+  grid-template-columns: 30px auto;
+  grid-template-rows: auto 30px;
 }
 
-.span-row-2 {
-  grid-row: span 2 / auto;
+.x {
+  grid-area: axisx;
+  /*background: blue;*/
+}
+.plot {
+  grid-area: plot;
+  background: yellow;
+}
+.y {
+  grid-area: axisy;
+  background: red;
+}
+
+.bp3-button-fill {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.bp3-button-fill > span {
+  width: 90%;
+  text-align: center;
+}
+
+.vertical-text {
+  transform: rotate(-90deg) translateX(-45%) translateY(-283%);
+  width: 200px;
+  /*transform-origin: 10px 20px 0px;*/
+  /*justify-content: flex-start;*/
 }
 
 .titlebar-draggable {
   -webkit-app-region: drag
 }
 
-/*@media screen and (min-width: 768px) {*/
-/*.grid {*/
-/*grid-template-columns: repeat(2, 1fr);*/
+
+/*.grid-container div img {*/
+  /*transition: all .2s ease-in;*/
+  /*filter: grayscale(100%);*/
 /*}*/
+
+/*.grid-container div:hover img {*/
+  /*filter: grayscale(0);*/
 /*}*/
-
-@media screen and (min-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media screen and (min-width: 1024px) {
-  .grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.grid a img {
-  transition: all .2s ease-in;
-  filter: grayscale(100%);
-}
-
-.grid a:hover img {
-  filter: grayscale(0);
-}
