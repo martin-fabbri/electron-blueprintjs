@@ -11,7 +11,7 @@ export interface NavbarProps {
     setThemeState: (theme: string) => void;
 }
 
-class Navbar extends React.Component<NavbarProps> {
+class NavbarCssVer extends React.Component<NavbarProps> {
     public render() {
         return (
             <nav className="bp3-navbar bp3-dark titlebar-draggable">
@@ -71,4 +71,4 @@ class Navbar extends React.Component<NavbarProps> {
 
 }
 
-export default Navbar;
+export default NavbarCssVer;
